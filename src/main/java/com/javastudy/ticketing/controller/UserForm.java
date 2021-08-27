@@ -1,8 +1,8 @@
 package com.javastudy.ticketing.controller;
 
 public class UserForm {
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setEmail(String email) {
@@ -13,8 +13,8 @@ public class UserForm {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getEmail() {
@@ -25,7 +25,7 @@ public class UserForm {
         return password;
     }
 
-    private String name;
+    private String username;
     private String email;
     private String password;
 }

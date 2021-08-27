@@ -47,4 +47,13 @@ public class MovieMemoryRepository implements MovieRepository {
 
     @Override
     public void delete(int id) { movies.remove(id); }
+
+    @Override
+    public Optional<Movie> findByTitleDate(String title, String date) {
+        Optional<Movie> result = this.findByTitle(title);
+        return result.stream().filter(movie -> movie.getDate().equals(date))
+                .findAny();
+
+
+    }
 }

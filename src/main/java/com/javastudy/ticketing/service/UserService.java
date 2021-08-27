@@ -23,7 +23,7 @@ public class UserService {
     }
 
     private void validateDuplicatedUser(User user){
-        userRepository.findByName(user.getName())
+        userRepository.findByUsername(user.getUsername())
                 .ifPresent(me -> {
                     throw new IllegalStateException("이미 존재하는 회원입니다.");
                 });
@@ -39,7 +39,7 @@ public class UserService {
         validateDuplicatedUser(user);
 
         Optional<User> result = user_temp.map(selectedUser -> {
-            selectedUser.setName(user.getName());
+            selectedUser.setUsername(user.getUsername());
             selectedUser.setEmail(user.getEmail());
             selectedUser.setPassword(user.getPassword());
             User newUser = userRepository.update(user_id, selectedUser);
@@ -52,6 +52,14 @@ public class UserService {
     public void deleteUserInfo(int user_id){
         Optional<User> user = userRepository.findById(user_id);
         userRepository.delete(user_id);
+
+    }
+
+    public User findUser(String intputEmail, String inputPassword){
+        Optional<User> user = userRepository.findByEmailAndPassword(intputEmail, inputPassword);
+        if(user == null){
+           throw new IllegalStateException("해당하는 회원정보가 없습니다.");
+        } return user.get();
 
     }
 

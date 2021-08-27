@@ -23,7 +23,7 @@ public class UserController {
     @PostMapping("signup")
     public String signUp(UserForm form, Model model){
         User user = new User();
-        user.setName(form.getName());
+        user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
         user.setPassword(form.getPassword());
         //service로 전달하기위해 domain(entity)사용
@@ -31,20 +31,23 @@ public class UserController {
 //        model.addAttribute("user",user);
         return "redirect:/";
     }
+
     //유저정보하나가져오기
     @GetMapping("user")
     public String getUserInfo(@RequestParam(value = "user_id") int user_id, Model model){
         Optional<User> user = userservice.getUserInfo(user_id);
         user.ifPresent(singleUser -> model.addAttribute("user",singleUser));
-//        if (user.isEmpty()){ return new String("해당 아이디의 회원이 존재하지 않습니다."); }//이따가 테스트해보기
+        if (user.isEmpty()){ return new String("해당 아이디의 회원이 존재하지 않습니다."); }//이따가 테스트해보기
         return "user/userInfo";
     }
+
     //유저정보수정하기
     @PatchMapping("user")
     @ResponseBody
     public Optional<User> updateUserInfo(@RequestParam(value = "user_id") int user_id , @RequestBody User user){
         return userservice.updateUserInfo(user_id , user);
     }
+
     //유저정보삭제하기
     @DeleteMapping("user")
     public String deleteUserInfo(@RequestParam(value = "user_id") int user_id){
@@ -52,8 +55,11 @@ public class UserController {
        return "redirect:/";
     }
 
-    @PostMapping("/signIn")
-    public String singIn(String inputEmail, String inputPassword){
+    @GetMapping("/loginform")
+    public String loginForm() { return "user/loginForm"; }
+
+    @PostMapping("/login")
+    public String login(String inputEmail, String inputPassword){
         User user = this.userservice.findUser(inputEmail, inputPassword);
         if(user != null){
             return "user/loginOk";

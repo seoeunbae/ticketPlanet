@@ -20,14 +20,14 @@ public class MovieService {
 
     private void validateDuplicatedMovie(Movie movie){
         movieRepository.findByTitle(movie.getTitle())
-                .ifPresent(singlemovie ->{
+                .ifPresent(singlemovie -> {
                     throw new IllegalStateException("이미 존재하는 영화입니다.");
                 });
     }
 
     public Movie createMovie(Movie movie){
         validateDuplicatedMovie(movie);
-        Movie result = movieRepository.save(movie);
+        Movie result =movieRepository.save(movie);
         return result;
     }
 

@@ -40,7 +40,7 @@ public class jpaMovieRepository implements MovieRepository {
 
     @Override
     public Optional<Movie> findByTitle(String title) {
-        List<Movie> result = em.createQuery("select m from Movie m where m.title =: title", Movie.class)
+        List<Movie> result = em.createQuery("select m from Movie m where m.title = :title", Movie.class)
                 .setParameter("title",title)
                 .getResultList();
 
@@ -57,5 +57,13 @@ public class jpaMovieRepository implements MovieRepository {
     public void delete(int id) {
         Movie movie = em.find(Movie.class , id);
         em.remove(movie);
+    }
+
+    @Override
+    public Optional<Movie> findByTitleDate(String title, String date) {
+        Movie result = em.createQuery("select m from Movie m where m.title = :title and m.date = :date", Movie.class)
+                .setParameter("title",title).setParameter("date",date)
+                .getSingleResult();
+        return Optional.ofNullable(result);
     }
 }

@@ -3,7 +3,11 @@ package com.javastudy.ticketing.controller;
 import com.javastudy.ticketing.domain.Movie;
 import com.javastudy.ticketing.domain.Ticket;
 import com.javastudy.ticketing.domain.User;
+import com.javastudy.ticketing.repository.MovieRepository;
+import com.javastudy.ticketing.repository.UserRepository;
+import com.javastudy.ticketing.service.MovieService;
 import com.javastudy.ticketing.service.TicketService;
+import com.javastudy.ticketing.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,26 +17,34 @@ import java.util.Optional;
 
 @Controller
 public class TicketController {
-
-    public TicketController(TicketService ticketService) {
+    public TicketController(TicketService ticketService, MovieService movieService) {
         this.ticketService = ticketService;
+        this.movieService = movieService;
     }
-
     private final TicketService ticketService;
+    private final MovieService movieService;
 
+    @GetMapping("/ticketingform")
+    public String ticketingForm(Model model){
+        List<Movie> movies =   movieService.getMovieAll();
+        model.addAttribute("movies",movies);
+        return "ticket/ticketingForm";
+    }
 
 
     @PostMapping("ticket")
-    public String createTicket(TicketForm form, Model model){
-        Ticket ticket = new Ticket();
-        Optional<Movie> movieObj = ticketService.convert2MovieObj(form.getMovie_id());
-        Optional<User> userObj = ticketService.convert2UserObj(form.getUser_id());
-        ticket.setUser(userObj.get());
-        ticket.setMovie(movieObj.get());
+    public String createTicket(createTicketForm form, Model model) throws Exception{
+        try {
+            Ticket ticket = ticketService.createTicket(form.getUsername(), form.getTitle(), form.getDate());
+            ticketService.createTicket(ticket);
+            model.addAttribute("ticket", ticket);
+            return "redirect:/";
+        } catch (Exception e) {
+            model.addAttribute("e",e);
+            return "error";
+//            throw new IllegalStateException("정확한 유저,영화 정보를 입력해주세요.");
+        }
 
-        ticketService.createTicket(ticket);
-        model.addAttribute("ticket", ticket);
-        return "redirect:/";
     }
 
     @GetMapping("ticket")

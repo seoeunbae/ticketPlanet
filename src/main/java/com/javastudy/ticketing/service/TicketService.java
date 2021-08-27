@@ -24,23 +24,6 @@ public class TicketService {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
 
-
-
-
-//    private void validateDuplicateTicket(Ticket ticket){
-//
-//    }
-
-    public Optional<User> convert2UserObj(int user_id){
-        Optional<User> result = userRepository.findById(user_id);
-        return result;
-    }
-
-    public Optional<Movie> convert2MovieObj(int movie_id){
-        Optional<Movie> result = movieRepository.findById(movie_id);
-        return result;
-    }
-
     public Ticket createTicket(Ticket ticket) {
         Ticket result = ticketRepository.save(ticket);
         return result;
@@ -58,6 +41,17 @@ public class TicketService {
             return newTicket;
         });
         return result;
+    }
+
+    public Ticket createTicket(String name, String title,String date){
+        Optional<User> user = this.userRepository.findByUsername(name);
+        Optional<Movie> movie = this.movieRepository.findByTitleDate(title,date);
+        if (user.isEmpty()){ throw new IllegalStateException("유저정보가 없습니다."); }
+        if (movie.isEmpty()){ throw new IllegalStateException("영화정보가 없습니다."); }
+        Ticket ticket = new Ticket();
+        ticket.setMovie(movie.get());
+        ticket.setUser(user.get());
+        return ticket;
     }
 
     public void deleteTicketInfo(int id){ ticketRepository.delete(id); }

@@ -20,26 +20,21 @@ public class MovieController {
 
     private final MovieService movieService;
 
-    @GetMapping("ticketingform")
-    public String ticketingForm(Model model){
-        List<Movie> movies = movieService.getMovieAll();
-        model.addAttribute("movies",movies);
-        return "movie/movieList";
-    }
-
     @GetMapping("createmovieform")
     public String createMovieForm(){
         return "movie/createMovieForm";
     }
 
     @PostMapping("movie")
-    public String createMovie(MovieForm form, Model model){
+    public String createMovie(MovieForm form, Model model){//Movieform의 각 속성에 html의 name에 맞는 속성들이 넣어져서 form이 생성된다.
         Movie movie = new Movie();
         movie.setTitle(form.getTitle());
         movie.setPrice(form.getPrice());
         movie.setDate(form.getDate());
-        movieService.createMovie(movie);
-        return "redirect:/";
+        Movie result = movieService.createMovie(movie);
+
+        model.addAttribute("movie",result);
+        return "movie/movieInfo";
     }
 
     @GetMapping("movie")
@@ -61,4 +56,10 @@ public class MovieController {
         return "redirect:/";
     }
 
+    @GetMapping("movies")
+    public String getMovieAll(Model model){
+        List<Movie> movies = movieService.getMovieAll();
+        model.addAttribute("movies", movies);
+        return "movie/movieList";
+    }
 }
